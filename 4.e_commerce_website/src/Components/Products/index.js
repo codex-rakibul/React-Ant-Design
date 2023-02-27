@@ -19,6 +19,7 @@ function Products() {
   const [loading, setLoasding] = useState(false);
   const param = useParams();
   const [items, setItems] = useState([]);
+  const [sortOder, setSortOder] = useState('az');
   useEffect(() => {
     setLoasding(true);
     (param?.categoryId
@@ -29,6 +30,23 @@ function Products() {
       setLoasding(false);
     });
   }, [param]);
+  const getSortedItems=()=>{
+    const sortedItems = [...items]
+    sortedItems.sort((a,b)=>{
+      const alowerCaseTitle = a.title.toLowerCase();
+      const blowerCaseTitle = b.title.toLowerCase();
+      if(sortOder === 'az' ){
+        return alowerCaseTitle > blowerCaseTitle ? 1: alowerCaseTitle === blowerCaseTitle ? 0:-1;
+      }else if (sortOder === 'za' ){
+        return alowerCaseTitle < blowerCaseTitle ? 1: alowerCaseTitle === blowerCaseTitle ? 0:-1;
+      }else if (sortOder === 'lowHigh' ){
+        return a.price > b.price ? 1: a.price === b.price ? 0:-1;
+      }else if (sortOder === 'highLow' ){
+        return a.price < b.price ? 1: a.price === b.price ? 0:-1;
+      }
+    })
+    return sortedItems;
+  }
   if (loading) {
     return <Spin spinning />;
   }
@@ -37,6 +55,7 @@ function Products() {
       <div>
         <Typography.Text>View Items Sorted By: </Typography.Text>
         <Select
+        onChange={(value)=>{ setSortOder(value)}}
         defaultValue={"az"}
         options={[
           {
@@ -103,7 +122,7 @@ function Products() {
             </Badge.Ribbon>
           );
         }}
-        dataSource={items}
+        dataSource={getSortedItems(items)}
       ></List>
     </div>
   );
